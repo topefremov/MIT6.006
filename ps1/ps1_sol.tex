@@ -443,7 +443,79 @@ Hence, we have a contradiction.
 
 \ifsolution \solution{}
 %%% PROBLEM 5 SOLUTION START %%%
-Write your proof here.
+\begin{quote}
+	We wish to show that \texttt{algorithm4}
+	will always return a peak,
+	as long as the problem is not empty.
+	To that end,
+	we wish to prove the following two statements:
+	
+	{\bf 1. If the peak problem is not empty,
+		then \texttt{algorithm4} will always return a location.}
+	Say that we start with a problem of size $m \times n$.
+	The recursive subproblem examined by \texttt{algorithm4}
+	will have dimensions
+	$m \times \lfloor n / 2 \rfloor$ or 
+	$m \times \left(n - \lfloor n / 2 \rfloor - 1 \right)$
+	or $\lfloor m / 2 \rfloor \times n$ or 
+	$\left(m - \lfloor m / 2 \rfloor - 1 \right) \times n$.
+	Therefore, the number of columns or rows in the problem
+	strictly decreases with each recursive call
+	as long as $n > 0$ or $m > 0$.
+	So \texttt{algorithm4} either returns a location at some point,
+	or eventually examines a subproblem with a non-positive
+	number of rows or columns.
+	The only way for the number of rows or columns to become strictly negative,
+	according to the formulas that determine the size of the subproblem,
+	is to have $m = 0$ or $n = 0$ at some point.
+	So if \texttt{algorithm4} doesn't return a location,
+	it must eventually examine an empty subproblem.
+	
+	We wish to show that there is no way that this can occur.
+	Assume, to the contrary,
+	that \texttt{algorithm4} does examine an empty subproblem.
+	Just prior to this,
+	it must examine a subproblem of size
+	$m \times 1$ or $m \times 2$ or $1 \times n$ or $2 \times n$.
+	If the problem is of size $m \times 1$,
+	then calculating the maximum of the central column
+	is equivalent to calculating the maximum of the entire problem.
+	Hence, the maximum that the algorithm finds must be a peak,
+	and it will halt and return the location.
+	If the problem has dimensions $m \times 2$,
+	then there are two possibilities:
+	either the maximum of the central column is a peak, which means it is the best neighbor and better value that has been seen so far by the algorithm (in which case the algorithm will halt and return the location), or it has a strictly better neighbor in the other column
+	(in which case the algorithm will determine if this neigbor is better then the best value seen so far and recurse
+	on the non-empty subproblem with dimensions $m \times 1$, which contains the best value seen so far, thus reducing to the previous case). Same logic follows for the cases with the dimenstions $1 \times n$ or $2 \times n$
+	So \texttt{algorithm4} can never recurse into an empty subproblem,
+	and therefore \texttt{algorithm1} must eventually return a location.
+	
+	{\bf 2. If \texttt{algorithm4} returns a location,
+		it will be a peak in the original problem.}
+	If \texttt{algorithm4} returns a location $(r_1, c_1)$,
+	then that location must have the best value in column $c_1$ and be the best value that has been seen by the algorithm,
+	and must have been a peak within some recursive subproblem.
+	Assume, for the sake of contradiction,
+	that $(r_1, c_1)$ is not also a peak within the original problem.
+	Then as the location $(r_1, c_1)$ is passed up the chain of recursive calls,
+	it must eventually reach a level where it stops being a peak.
+	At that level, the location $(r_1, c_1)$
+	must be adjacent to the dividing column $c_2$ (where $|c_1 - c_2| = 1$), or to the dividing row $r_2$ (where $|r_1 - r_2| = 1$). Without loss of generality let's consider only the case with dividing column $c_2$. In that case the values must satisfy the inequality
+	$val(r_1, c_1) < val(r_1, c_2)$.
+	
+	Let $(r_2, c_2)$ be
+	the location of the maximum value found by \texttt{algorithm4}
+	in the dividing column.
+	Because the algorithm chose to recurse
+	on the half containing $(r_1, c_1)$,
+	we know that there is some value $v$ that is strictly greater than  $val(r_2, c_2)$. This value is the best seen value by the algorithm at that point.
+	Hence, we have the following chain of inequalities:
+	$$val(r_1, c_1) < val(r_1, c_2) < v$$
+	But in order for \texttt{algorithm4} to return $(r_1, c_1)$ as a peak,
+	the value at $(r_1, c_1)$ must have been the greatest value seen by the algorithm,
+	making $val(r_1, c_1) > val(r_2, c_1)$.
+	Hence, we have a contradiction.
+\end{quote}
 %%% PROBLEM 5 SOLUTION END %%%
 \fi
 
