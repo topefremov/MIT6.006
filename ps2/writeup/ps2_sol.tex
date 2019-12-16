@@ -23,110 +23,117 @@ None.
 
 \newcommand{\answerIa}{ \answer
 %%% PROBLEM 1(a) ANSWER START %%%
-0
+2
 %%% PROBLEM 1(a) ANSWER END %%%
 }
 
 \newcommand{\answerIb}{ \answer
 %%% PROBLEM 1(b) ANSWER START %%%
-0
+2
 %%% PROBLEM 1(b) ANSWER END %%%
 }
 
 \newcommand{\answerIc}{ \answer
 %%% PROBLEM 1(c) ANSWER START %%%
-0
+2
 %%% PROBLEM 1(c) ANSWER END %%%
 }
 
 \newcommand{\answerId}{ \answer
 %%% PROBLEM 1(d) ANSWER START %%%
-0
+4
 %%% PROBLEM 1(d) ANSWER END %%%
 }
 \newcommand{\answerIe}{ \answer
 %%% PROBLEM 1(e) ANSWER START %%%
-0
+4
 %%% PROBLEM 1(e) ANSWER END %%%
 }
 \newcommand{\answerIf}{ \answer
 %%% PROBLEM 1(f) ANSWER START %%%
-0
+2
 %%% PROBLEM 1(f) ANSWER END %%%
 }
 \newcommand{\answerIg}{ \answer
 %%% PROBLEM 1(g) ANSWER START %%%
-0
+2
 %%% PROBLEM 1(g) ANSWER END %%%
 }
 \newcommand{\answerIh}{ \answer
 %%% PROBLEM 1(h) ANSWER START %%%
-0
+1
 %%% PROBLEM 1(h) ANSWER END %%%
 }
 \newcommand{\answerIi}{ \answer
 %%% PROBLEM 1(i) ANSWER START %%%
-0
+2
 %%% PROBLEM 1(i) ANSWER END %%%
 }
 \newcommand{\answerIj}{ \answer
 %%% PROBLEM 1(j) ANSWER START %%%
-0
+1
 %%% PROBLEM 1(j) ANSWER END %%%
 }
 \newcommand{\answerIk}{ \answer
 %%% PROBLEM 1(k) ANSWER START %%%
-0
+4
 %%% PROBLEM 1(k) ANSWER END %%%
 }
 \newcommand{\answerIl}{ \answer
 %%% PROBLEM 1(l) ANSWER START %%%
-0
+4
 %%% PROBLEM 1(l) ANSWER END %%%
 }
 \newcommand{\answerIm}{ \answer
 %%% PROBLEM 1(m) ANSWER START %%%
-0
+2
 %%% PROBLEM 1(m) ANSWER END %%%
 }
 \newcommand{\answerIn}{ \answer
 %%% PROBLEM 1(n) ANSWER START %%%
-0
+2
 %%% PROBLEM 1(n) ANSWER END %%%
 }
 \newcommand{\answerIo}{ \answer
 %%% PROBLEM 1(o) ANSWER START %%%
-0
+1
 %%% PROBLEM 1(o) ANSWER END %%%
 }
 \newcommand{\answerIp}{ \answer
 %%% PROBLEM 1(p) ANSWER START %%%
-0
+4
 %%% PROBLEM 1(p) ANSWER END %%%
 }
 \newcommand{\answerIq}{ \answer
 %%% PROBLEM 1(q) ANSWER START %%%
-0
+1
 %%% PROBLEM 1(q) ANSWER END %%%
 }
 \newcommand{\answerIr}{ \answer
 %%% PROBLEM 1(r) ANSWER START %%%
-0
+3
 %%% PROBLEM 1(r) ANSWER END %%%
 }
 \newcommand{\answerIs}{ \answer
 %%% PROBLEM 1(s) ANSWER START %%%
-0
+3
 %%% PROBLEM 1(s) ANSWER END %%%
 }
 \newcommand{\answerIt}{ \answer
 %%% PROBLEM 1(t) ANSWER START %%%
-0
+1
 %%% PROBLEM 1(t) ANSWER END %%%
 }
 \newcommand{\answerIu}{ \answer
 %%% PROBLEM 1(u) ANSWER START %%%
-Your proof in latex.
+At the level -1 of a recursion tree there is only 1 triangle 
+of length $l=1$.
+At the level $0$ of the recursion three there are 3 triangles of length $l=1/3$.
+So in general at the level $i$ of the recursion tree there are $3\cdot4^i$ triangles of length $l=\frac{1}{3}^i$.
+The time to rasterize a triangle is $\frac{1}{9}^i$. At the level $n$ the algorithm reaches the general case and terminate.
+Also at the level $n$ there is no work to do. So $T(n)$ is expressed by the formula:
+$$1+3\sum_{i=0}^{n-1}4^i\cdot\frac{1}{9^{i+1}}=1+\frac{1}{3}\sum_{i=0}^{n-1}\frac{4}{9}^i=\Theta(1)$$
+Note that the summation converges to constant.
 %%% PROBLEM 1(u) ANSWER END %%%
 }
 \newcommand{\answerIIa}{ \answer 
