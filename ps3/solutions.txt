@@ -7,3 +7,18 @@ e - 6
 f - 5
 g - 6
 h - 5
+i - 4
+j - 3
+k - 2
+l - 3
+m - 4
+n - 4
+o - 1:t, 2:t, 3:t, 4:t, 5:f, 6:f
+p - 3
+q - 2
+r - 3
+s - 8
+t - 8
+u - We argue that LCA returns a lowest common ancestor of l and h. ....
+
+
