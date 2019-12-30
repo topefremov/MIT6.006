@@ -21,4 +21,15 @@ s - 8
 t - 8
 u - We argue that LCA returns a lowest common ancestor of l and h. ....
 
+Problem 3-2
+a - intersects
+b - 187590314
+c - 1:true, 2:true, 3:false, 4:false, 5:true
+d - 1
+e - 2
+f - 4
+g - 3
+h - 2
+i - 2
+
 
