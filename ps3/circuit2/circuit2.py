@@ -4,6 +4,7 @@ import json   # Used when TRACE=jsonp
 import os     # Used to get the TRACE environment variable
 import re     # Used when TRACE=jsonp
 import sys    # Used to smooth over the range / xrange issue.
+from operator import itemgetter
 
 # Python 3 doesn't have xrange, and range behaves like xrange.
 if sys.version_info >= (3,):
@@ -326,12 +327,14 @@ class CrossVerifier(object):
 
   def _events_from_layer(self, layer):
     """Populates the sweep line events from the wire layer."""
-    left_edge = min([wire.x1 for wire in layer.wires.values()])
     for wire in layer.wires.values():
       if wire.is_horizontal():
-        self.events.append([left_edge, 0, wire.object_id, 'add', wire])
+        self.events.append([wire.x1, 0, wire.object_id, 'add', wire])
+        self.events.append([wire.x2, 2, wire.object_id, 'remove', wire])
       else:
         self.events.append([wire.x1, 1, wire.object_id, 'query', wire])
+    
+    self.events = sorted(self.events, key=itemgetter(0, 1))
 
   def _compute_crossings(self, count_only):
     """Implements count_crossings and wire_crossings."""
@@ -342,11 +345,12 @@ class CrossVerifier(object):
 
     for event in self.events:
       event_x, event_type, wire = event[0], event[3], event[4]
-      
+      self.trace_sweep_line(event_x)
       if event_type == 'add':
         self.index.add(KeyWirePair(wire.y1, wire))
+      elif event_type == 'remove':
+        self.index.remove(KeyWirePair(wire.y1, wire))  
       elif event_type == 'query':
-        self.trace_sweep_line(event_x)
         cross_wires = []
         for kwp in self.index.list(KeyWirePairL(wire.y1),
                                    KeyWirePairH(wire.y2)):
