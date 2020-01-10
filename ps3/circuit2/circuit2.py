@@ -5,6 +5,7 @@ import os     # Used to get the TRACE environment variable
 import re     # Used when TRACE=jsonp
 import sys    # Used to smooth over the range / xrange issue.
 from operator import itemgetter
+import avl
 
 # Python 3 doesn't have xrange, and range behaves like xrange.
 if sys.version_info >= (3,):
@@ -138,22 +139,34 @@ class WireLayer(object):
       
     return layer
 
+class BSTnode(object):
+  """
+  Representation of a node in a binary search tree.
+  Has a left child, right child, and key value.
+  """
+  def __init__(self, t):
+    """Create a new leaf with key t."""
+    self.key = t
+    self.disconnect()
+  def disconnect(self):
+    self.left = None
+    self.right = None
+    self.parent = None    
+
 class RangeIndex(object):
-  """Array-based range index implementation."""
+  """AVL-tree based range index implementation."""
   
   def __init__(self):
     """Initially empty range index."""
-    self.data = []
+    self.tree = avl.AVL()
   
   def add(self, key):
     """Inserts a key in the range index."""
-    if key is None:
-        raise ValueError('Cannot insert nil in the index')
-    self.data.append(key)
+    self.tree.insert(key)
   
   def remove(self, key):
     """Removes a key from the range index."""
-    self.data.remove(key)
+    self.tree.delete(key)
   
   def list(self, first_key, last_key):
     """List of values for the keys that fall within [first_key, last_key]."""
@@ -354,8 +367,7 @@ class CrossVerifier(object):
         cross_wires = []
         for kwp in self.index.list(KeyWirePairL(wire.y1),
                                    KeyWirePairH(wire.y2)):
-          if wire.intersects(kwp.wire):
-            cross_wires.append(kwp.wire)
+          cross_wires.append(kwp.wire)
         if count_only:
           result += len(cross_wires)
         else:
