@@ -1,3 +1,23 @@
+def node_list(node, l, h, result):
+    if node is None:
+        return
+    
+    if l <= node.key and node.key <= h:
+        result.add(node.key)
+    if (node.key >= l):
+        node_list(node.left, l, h, result)
+    if (node.key <= h):
+        node_list(node.right, l, h, result)
+
+def lca(root, l, h):
+    node = root
+    while node is not None and l <= node.key and h >= node.key:
+        if l < node.key:
+            node = node.left
+        else:
+            node = node.right
+    return node
+
 class BST(object):
     """
 Simple binary search tree implementation.
@@ -64,6 +84,13 @@ and a pointer to the root.
         
         return node, parent
 
+
+    def list(self, l, h):
+        lca_node = lca(self.root, l, h)
+        result = []
+        node_list(lca_node, l, h, result)
+        return result
+    
     def rank(self, t):
         """Return the number of keys <= t in the subtree rooted at root."""
         if self.root is not None:
@@ -170,7 +197,7 @@ Has a left child, right child, and key value.
        if (self.left is None and self.right is None):
            self.size = 1
        else:
-        self.size = (1 if self.left is None else self.left.size) + (1 if self.right is None else self.right.size) 
+        self.size = (1 if self.left is None else self.left.size) + (1 if self.right is None else self.right.size)         
     
     def rank(self, t):
        """Return the number of keys <= t in the subtree rooted at this node."""
