@@ -34,7 +34,9 @@ class Circuit2Test(unittest.TestCase):
         return False
 
   def _cmp_counts(self, file, result):
-    return int(file.readline()) == result
+    expected = int(file.readline())
+    print("Expected: " + str(expected) + ". ActualResult: " + str(result))
+    return expected == result
 
   def testCorrectness(self):
     print 'Testing correctness:'
@@ -46,8 +48,10 @@ class Circuit2Test(unittest.TestCase):
         layer = WireLayer.from_file(in_file)
         verifier = CrossVerifier(layer)
         if list_test:
+          print("test list")  
           result = verifier.wire_crossings()
         else:
+          print("test count")
           result = verifier.count_crossings()
        
         gold_filename = re.sub('\.in$', '.gold', in_filename)

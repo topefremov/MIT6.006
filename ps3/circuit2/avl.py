@@ -31,6 +31,8 @@ Supports insert, find, and delete-min operations in O(lg n) time.
         x.parent = y
         update_height(x)
         update_height(y)
+        x.update_size()
+        y.update_size()
 
     def right_rotate(self, x):
         y = x.left
@@ -49,20 +51,30 @@ Supports insert, find, and delete-min operations in O(lg n) time.
         x.parent = y
         update_height(x)
         update_height(y)
+        x.update_size()
+        y.update_size()
+
+    def list(self, l, h):
+        return bst.BST.list(self, l, h)
+
+    def count(self, l, h):
+        return bst.BST.count(self, l, h)
 
     def insert(self, t):
         """Insert key t into this tree, modifying it in-place."""
         node = bst.BST.insert(self, t)
-        self.rebalance(node)
+        if node is not None:
+            self.rebalance(node)
 
     def delete(self, t):
         """Delete key t from this BST, modifying it in-place"""
         node, parent = bst.BST.delete(self, t)
         self.rebalance(parent)
-
+        
     def rebalance(self, node):
         while node is not None:
             update_height(node)
+            node.update_size()
             if height(node.left) >= 2 + height(node.right):
                 if height(node.left.left) >= height(node.left.right):
                     self.right_rotate(node)
@@ -77,10 +89,6 @@ Supports insert, find, and delete-min operations in O(lg n) time.
                     self.left_rotate(node)
             node = node.parent
 
-    def delete_min(self):
-        node, parent = bst.BST.delete_min(self)
-        self.rebalance(parent)
-        #raise NotImplemented('AVL.delete_min')
 
 def test(args=None):
     bst.test(args, BSTtype=AVL)

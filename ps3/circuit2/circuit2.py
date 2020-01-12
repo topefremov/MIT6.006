@@ -139,34 +139,24 @@ class WireLayer(object):
       
     return layer
 
-class BSTnode(object):
-  """
-  Representation of a node in a binary search tree.
-  Has a left child, right child, and key value.
-  """
-  def __init__(self, t):
-    """Create a new leaf with key t."""
-    self.key = t
-    self.disconnect()
-  def disconnect(self):
-    self.left = None
-    self.right = None
-    self.parent = None    
 
 class RangeIndex(object):
-  """AVL-tree based range index implementation."""
+  """Array-based range index implementation."""
   
   def __init__(self):
     """Initially empty range index."""
-    self.tree = avl.AVL()
+    print("Array-based range index")
+    self.data = []
   
   def add(self, key):
     """Inserts a key in the range index."""
-    self.tree.insert(key)
+    if key is None:
+        raise ValueError('Cannot insert nil in the index')
+    self.data.append(key)
   
   def remove(self, key):
     """Removes a key from the range index."""
-    self.tree.delete(key)
+    self.data.remove(key)
   
   def list(self, first_key, last_key):
     """List of values for the keys that fall within [first_key, last_key]."""
@@ -179,6 +169,30 @@ class RangeIndex(object):
       if first_key <= key <= last_key:
         result += 1
     return result
+
+class AvlRangeIndex(object):
+  """AVL-tree based range index implementation."""
+  
+  def __init__(self):
+    """Initially empty range index."""
+    print("AVL-tree based range index")
+    self.tree = avl.AVL()
+  
+  def add(self, key):
+    """Inserts a key in the range index."""
+    self.tree.insert(key)
+  
+  def remove(self, key):
+    """Removes a key from the range index."""
+    self.tree.delete(key)
+  
+  def list(self, first_key, last_key):
+    """List of values for the keys that fall within [first_key, last_key]."""
+    return self.tree.list(first_key, last_key)
+  
+  def count(self, first_key, last_key):
+    """Number of keys that fall within [first_key, last_key]."""
+    return self.tree.count(first_key, last_key)
   
 class TracedRangeIndex(RangeIndex):
   """Augments RangeIndex to build a trace for the visualizer."""
@@ -320,7 +334,7 @@ class CrossVerifier(object):
     self._events_from_layer(layer)
     self.events.sort()
   
-    self.index = RangeIndex()
+    self.index = AvlRangeIndex()
     self.result_set = ResultSet()
     self.performed = False
   
@@ -347,7 +361,7 @@ class CrossVerifier(object):
       else:
         self.events.append([wire.x1, 1, wire.object_id, 'query', wire])
     
-    self.events = sorted(self.events, key=itemgetter(0, 1))
+    self.events.sort()
 
   def _compute_crossings(self, count_only):
     """Implements count_crossings and wire_crossings."""
@@ -364,16 +378,13 @@ class CrossVerifier(object):
       elif event_type == 'remove':
         self.index.remove(KeyWirePair(wire.y1, wire))  
       elif event_type == 'query':
-        cross_wires = []
-        for kwp in self.index.list(KeyWirePairL(wire.y1),
-                                   KeyWirePairH(wire.y2)):
-          cross_wires.append(kwp.wire)
-        if count_only:
-          result += len(cross_wires)
-        else:
-          for cross_wire in cross_wires:
-            result.add_crossing(wire, cross_wire)
-
+          if count_only:
+              result += self.index.count(KeyWirePairL(wire.y1),
+                                       KeyWirePairH(wire.y2))
+          else:
+              for kwp in self.index.list(KeyWirePairL(wire.y1),
+                                       KeyWirePairH(wire.y2)):
+                  result.add_crossing(wire, kwp.wire)
     return result
   
   def trace_sweep_line(self, x):

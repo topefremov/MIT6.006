@@ -1,27 +1,34 @@
 def node_list(node, l, h, result):
     if node is None:
-        return
-    
-    if l <= node.key and node.key <= h:
-        result.add(node.key)
+        return    
     if (node.key >= l):
         node_list(node.left, l, h, result)
+    if l <= node.key and node.key <= h:
+        result.append(node.key)    
     if (node.key <= h):
-        node_list(node.right, l, h, result)
+        node_list(node.right, l, h, result)    
 
 def lca(root, l, h):
     node = root
-    while node is not None and l <= node.key and h >= node.key:
-        if l < node.key:
+    while node is not None:
+        if l <= node.key and h >= node.key:
+            break
+        elif l < node.key:
             node = node.left
         else:
             node = node.right
     return node
 
+def update_sizes(node):
+        _node = node
+        while _node is not None:
+            _node.update_size()
+            _node = _node.parent
+    
+
 class BST(object):
     """
 Simple binary search tree implementation.
-This BST supports insert, find, and delete-min operations.
 Each tree contains some (possibly 0) BSTnode objects, representing nodes,
 and a pointer to the root.
 """
@@ -44,15 +51,15 @@ and a pointer to the root.
                         new.parent = node
                         break
                     node = node.left
-                else:
+                elif t > node.key:
                     # Go right
                     if node.right is None:
                         node.right = new
                         new.parent = node
                         break
                     node = node.right
-        
-        new.update_sizes_rec()            
+                else:
+                    return None
         return new
     
     def delete(self, t):
@@ -61,29 +68,32 @@ and a pointer to the root.
         if node is None:
             return None
     
+        to_update = None
+    
         if node.left == None:
             self._transplant(node, node.right)
         elif node.right == None:
             self._transplant(node, node.left)
         else:
-            _node = node.right.min()
-            if (_node.parent != node):
-                self._transplant(_node, _node.right)
-                _node.right = node.right
-                _node.right.parent = _node
+            successor = node.right.min()
+            successor_p = successor.parent
+            if (successor.parent != node):
+                self._transplant(successor, successor.right)
+                successor.right = node.right
+                to_update = successor_p
+                successor.right.parent = successor
+            self._transplant(node, successor)
+            successor.left = node.left
+            successor.left.parent = successor
+            to_update = successor if to_update is None else to_update
             
-            self._transplant(node, _node)
-            _node.left = node.left
-            _node.left.parent = _node
-        
         parent = node.parent
         node.disconnect()
-        
-        if parent is not None:
-            parent.update_sizes_rec()
-        
+        update_sizes(to_update)
         return node, parent
 
+    def count(self, l, h):
+        return self.rank(h) - self.rank(l)
 
     def list(self, l, h):
         lca_node = lca(self.root, l, h)
@@ -110,31 +120,6 @@ and a pointer to the root.
                 node = node.right
         return None
 
-    def delete_min(self):
-        """Delete the minimum key (and return the old node containing it)."""
-        if self.root is None:
-            return None, None
-        else:
-            # Walk to leftmost node.
-            node = self.root
-            while node.left is not None:
-                node = node.left
-            # Remove that node and promote its right subtree.
-            if node.parent is not None:
-                node.parent.left = node.right
-            else: # The root was smallest.
-                self.root = node.right
-            if node.right is not None:
-                node.right.parent = node.parent
-                    
-            parent = node.parent
-            node.disconnect()
-            
-            if parent is not None:
-                parent.update_sizes_rec()
-            
-            return node, parent
-
     def _transplant(self, u, v):
         if u.parent == None:
             self.root = v
@@ -144,8 +129,8 @@ and a pointer to the root.
             u.parent.right = v
         if v != None:
             v.parent = u.parent
-
-
+            
+            
     def __str__(self):
         if self.root is None: return '<empty tree>'
         def recurse(node):
@@ -186,18 +171,9 @@ Has a left child, right child, and key value.
         self.size = 1
         self.disconnect()
     
-    def update_sizes_rec(self):
-        node = self
-        while node is not None:
-            node.update_sizes()
-            node = node.parent
-    
-    def update_sizes(self):
+    def update_size(self):
        """Updates this node's size based on its children's sizes."""
-       if (self.left is None and self.right is None):
-           self.size = 1
-       else:
-        self.size = (1 if self.left is None else self.left.size) + (1 if self.right is None else self.right.size)         
+       self.size = (0 if self.left is None else self.left.size) + (0 if self.right is None else self.right.size) + 1         
     
     def rank(self, t):
        """Return the number of keys <= t in the subtree rooted at this node."""
