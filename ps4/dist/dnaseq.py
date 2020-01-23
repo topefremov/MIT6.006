@@ -10,33 +10,74 @@ class Multidict:
     # Initializes a new multi-value dictionary, and adds any key-value
     # 2-tuples in the iterable sequence pairs to the data structure.
     def __init__(self, pairs=[]):
-        raise Exception("Not implemented!")
+        self.t = {}
+        for pair in pairs:
+            self.put(pair[0], pair[1])
     # Associates the value v with the key k.
     def put(self, k, v):
-        raise Exception("Not implemented!")
+        try:
+            val = self.t[k]
+            val.append(v)
+        except KeyError:
+            self.t[k] = [v]
     # Gets any values that have been associated with the key k; or, if
     # none have been, returns an empty sequence.
     def get(self, k):
-        raise Exception("Not implemented!")
+        try:
+            return self.t[k]
+        except KeyError:
+            return []
+            
 
 # Given a sequence of nucleotides, return all k-length subsequences
 # and their hashes.  (What else do you need to know about each
 # subsequence?)
 def subsequenceHashes(seq, k):
-    raise Exception("Not implemented!")
+    
+    try:
+        subseq = ''
+        while len(subseq) < k:
+            subseq += seq.next()
+        
+        rh = RollingHash(subseq)
+        pos = 0
+        while True:
+            yield (rh.current_hash(), (pos, subseq))
+            c = seq.next()
+            rh.slide(subseq[0], c)
+            subseq = subseq[1:] + c
+            pos += 1
+    except StopIteration:
+        return
+    
+    
 
 # Similar to subsequenceHashes(), but returns one k-length subsequence
 # every m nucleotides.  (This will be useful when you try to use two
 # whole data files.)
 def intervalSubsequenceHashes(seq, k, m):
-    raise Exception("Not implemented!")
+    cur = m
+    for seqhash in subsequenceHashes(seq, k):
+        if cur == m:
+            cur = 1
+            yield seqhash
+        else:
+            cur += 1    
 
 # Searches for commonalities between sequences a and b by comparing
 # subsequences of length k.  The sequences a and b should be iterators
 # that return nucleotides.  The table is built by computing one hash
 # every m nucleotides (for m >= k).
 def getExactSubmatches(a, b, k, m):
-    raise Exception("Not implemented!")
+    seqdict = Multidict(intervalSubsequenceHashes(a, k, m))
+    for bhash, (bpos, bseq) in subsequenceHashes(b, k):
+        for apos, aseq in seqdict.get(bhash):
+            if (aseq == bseq):
+                yield (apos, bpos)
+            else:
+                continue
+        
+    
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
