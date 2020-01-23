@@ -1,0 +1,10 @@
+Problem 4-1
+(a) - 3
+(b) - 4
+(c) - 7
+(d) - If we let m'=m+k, then the amortized complexity for a sequence of n operations becomes O(n^2).
+Moreover, we have n/k table expansions instead of log(n).
+
+Problem 4-2
+(a) - 1
+(b) - 3
