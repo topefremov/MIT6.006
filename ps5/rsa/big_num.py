@@ -256,7 +256,23 @@ class BigNum(object):
     '''
     Slow method for multiplying two numbers w/ good constant factors.
     '''
-    return self.fast_mul(other)
+    if (len(self.d) >= len(other.d)):
+      bigger = self
+      smaller = other
+    else:
+      bigger = other
+      smaller = self
+    
+    max_digits = len(bigger.d)
+    result = BigNum.zero(max_digits * 2)
+    for i in xrange(0, len(smaller.d)):
+      carry = Byte.zero()
+      for j in xrange(0, len(bigger.d)):
+        digit = smaller.d[i] * bigger.d[j] + result.d[i + j].word() + carry.word()
+        result.d[i + j] = digit.lsb()
+        carry = digit.msb()
+      result.d[i + max_digits] = carry
+    return result.normalize()
 
   def fast_mul(self, other):
     '''
