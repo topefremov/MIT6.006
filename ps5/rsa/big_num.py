@@ -256,22 +256,14 @@ class BigNum(object):
     '''
     Slow method for multiplying two numbers w/ good constant factors.
     '''
-    if (len(self.d) >= len(other.d)):
-      bigger = self
-      smaller = other
-    else:
-      bigger = other
-      smaller = self
-    
-    max_digits = len(bigger.d)
-    result = BigNum.zero(max_digits * 2)
-    for i in xrange(0, len(smaller.d)):
+    result = BigNum.zero(len(self.d) + len(other.d))
+    for i in xrange(0, len(self.d)):
       carry = Byte.zero()
-      for j in xrange(0, len(bigger.d)):
-        digit = smaller.d[i] * bigger.d[j] + result.d[i + j].word() + carry.word()
+      for j in xrange(0, len(other.d)):
+        digit = self.d[i] * other.d[j] + result.d[i + j].word() + carry.word()
         result.d[i + j] = digit.lsb()
         carry = digit.msb()
-      result.d[i + max_digits] = carry
+      result.d[i + len(other.d)] = carry
     return result.normalize()
 
   def fast_mul(self, other):
@@ -331,7 +323,22 @@ class BigNum(object):
     '''
     Slow method for dividing two numbers w/ good constant factors.
     '''
-    return self.fast_divmod(other)
+    quotient = BigNum.zero()
+    remainder = BigNum(self.d)
+    divisors = [BigNum(other.d)]
+    i = 1
+    while True:
+      divisors.append(divisors[i-1] + divisors[i-1])
+      if divisors[i] > self:
+        break
+      i = i + 1
+    
+    for j in xrange(i - 1, -1, -1):
+      quotient = quotient + quotient
+      if remainder >= divisors[j]:
+        remainder = remainder - divisors[j]
+        quotient = quotient + BigNum.one()
+    return (quotient, remainder)
 
   def fast_divmod(self, other):
     '''
