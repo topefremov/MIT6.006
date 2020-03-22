@@ -195,8 +195,47 @@ class PathFinder(object):
             A tuple: (the path as a list of nodes from source to destination, 
                       the number of visited nodes)
         """
-        return NotImplemented 
-        
+        parents = {}
+        keys_by_nodes = {}
+        pqueue = PriorityQueue()
+        path = []
+        for node in nodes:
+            key = None
+            if (node == source):
+                key = NodeDistancePair(node, 0)
+            else:
+                key = NodeDistancePair(node, float("inf"))
+            pqueue.insert(key)
+            keys_by_nodes[key.node] = key
+            
+        while len(pqueue) != 0:
+            min_key = pqueue.extract_min()
+            node = min_key.node
+            if node == destination:
+                path = PathFinder.construct_path(destination, parents)
+                return (path, len(path))
+            for neighbor in node.adj:
+                w = weight(node, neighbor)
+                neighbor_key = keys_by_nodes[neighbor]
+                if neighbor_key.distance > min_key.distance + w:
+                    neighbor_key.distance = min_key.distance + w
+                    parents[neighbor] = node
+                    pqueue.decrease_key(neighbor_key)
+        return (path, len(path))
+                
+    @staticmethod
+    def construct_path(destination, parents):
+        path = []
+        node = destination
+        while node is not None:
+            path.append(node)
+            if node in parents:
+                node = parents[node]
+            else:
+                node = None
+        path.reverse()    
+        return path    
+    
     @staticmethod
     def from_file(file, network):
         """Creates a PathFinder object with source and destination read from 
